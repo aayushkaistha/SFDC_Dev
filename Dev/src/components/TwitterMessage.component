@@ -1,0 +1,32 @@
+<apex:component >
+
+	<apex:attribute name="message" type="TwitterMessage" required="true" description="" />
+
+<style>
+.twitText a:link {color: white; text-decoration: none;} /* unvisited link */
+.twitText a:active {color: white; text-decoration: underline;}
+.twitText a:visited {color: white;} /* visited link */
+.twitText a:hover {color: white; } 
+</style>
+
+	<table width="100%">
+	    <tr>
+	        <td>
+	            <apex:image value="{!message.sender.profile_image_url}" width="48" />
+	        </td>
+	        <td width="100%">
+	            <apex:outputText styleClass="twitText" escape="false" value="{!message.text}" />
+	        </td>
+	        <td rowspan="2" width="20px" style="font-size: 9px;">
+	            <a href="" title="Direct message {!message.sender.screen_name}" style="padding-bottom: 1px;" onclick="YAHOO.force.comessage.showMe('msg', '{!message.sender.screen_name}', '{!message.sender.id}'); return false;" >
+	                <img src="{!URLFOR($Resource.twitternav, 'directmessage.jpg')}" style="cursor: pointer;"/>
+	            </a>
+	        </td>
+	    </tr>
+	    <tr>
+	        <td colspan="2">
+	            {!message.sender.name} - {!message.created_at}
+	        </td>
+	    </tr>
+	</table>
+</apex:component>

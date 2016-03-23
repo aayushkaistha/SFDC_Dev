@@ -1,0 +1,27 @@
+<apex:page standardController="Order__c" extensions="OrderPageController">
+  <script src="../../soap/ajax/21.0/connection.js" type="text/javascript"></script>
+  <script>
+    function test(){
+      sforce.connection.sessionId = '{!$Api.Session_ID}';
+      var result = sforce.connection.query("Select Name, Id, cb1__c, cb2__c from Order__c where Id = '{!objOrder.Id}'");
+      var records = result.getArray("records");
+      for (var i=0; i< records.length; i++) {
+        var record = records[i];
+        alert(record.cb1__c + " -- " + record.cb2__c);
+      }
+    }
+  </script>
+  <h1>Order Number: </h1> {!objOrder.Name}
+  
+  <br/><br/>
+   
+  <apex:form >
+    <h1>First Name: </h1> <apex:inputField value="{!objOrder.First_Name__c}" />
+    <br/>
+    <h1>Last Name: </h1> <apex:inputField value="{!objOrder.Last_Name__c}" />
+  </apex:form>
+  
+  <br/><br/>
+  <input type="button" value="test" onclick="test()" />
+  <apex:outputText value="{!objOrder.TestRTA__c}" />
+</apex:page>

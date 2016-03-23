@@ -1,0 +1,7 @@
+<apex:component >
+    <apex:attribute name="status" type="TwitterStatus" description="TODO: Describe me"/>
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Component: {!status.text}
+  <!-- End Default Content REMOVE THIS --><br/>
+</apex:component>

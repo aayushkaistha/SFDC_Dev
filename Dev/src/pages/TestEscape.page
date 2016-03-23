@@ -1,0 +1,5 @@
+<apex:page controller="TestEscapeController">
+    Test Escape Page<br/><br/>
+    <script />
+    {!theCulprit}
+</apex:page>

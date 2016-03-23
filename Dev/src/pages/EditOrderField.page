@@ -1,0 +1,15 @@
+<apex:page controller="EditOrderField">
+  <apex:form >
+    Order Name: <apex:inputtext value="{!orderName}"/>
+    <br/>
+    <apex:commandButton action="{!findOrder}" value="Find" />
+    
+    <br/><br/>
+    Old Value: <apex:outputText value="{!objOrder.Status__c}" />
+    <br/>
+    New Value: <apex:inputText value="{!newStatus}" />
+    
+    <br/>
+    <apex:commandButton action="{!updateOrder}" value="Update" />
+  </apex:form>
+</apex:page>

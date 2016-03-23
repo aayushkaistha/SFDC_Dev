@@ -1,0 +1,27 @@
+<apex:page renderAs="pdf" showHeader="false" sidebar="false" standardController="Comments__c" extensions="CommentsPDFController">
+  This is a Test PDF.
+  
+   <table>
+      <tr>
+        <td>
+          <apex:outputText value="Comment ID" />        
+        </td>
+        <td>
+          <apex:outputText value="{!comment.Name}" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <apex:outputText value="Comment" />        
+        </td>
+        <td>
+          <apex:outputText value="{!comment.comment__c}" />
+        </td>
+      </tr>
+    </table>
+  
+  <br/>
+  <br/>
+  <br/>
+  Thanks!
+</apex:page>

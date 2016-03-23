@@ -1,0 +1,28 @@
+<apex:page controller="DTBugTestController">
+  <apex:includeScript value="{!URLFOR($Resource.jQuery, 'js/jquery-1.4.4.min.js')}" />
+  <script>
+    $(document).ready(function() {
+      formatDateField("ipField");
+    });
+  
+    function formatDateField(fieldId){ 
+      var ddvalue = $('*[id$="' + fieldId + '"]').val();
+      ddvalue = ddvalue.replace('GMT','');
+      if(ddvalue!=null && ddvalue!=''){
+        var dd = new Date(ddvalue);
+          if(dd != null && dd != 'NaN'){
+              var strdd = (dd.getMonth() + 1) + '/' + dd.getDate() + '/' + dd.getFullYear();
+              $('*[id$="' + fieldId + '"]').val(strdd);
+          }else{
+            var dd = new Date();
+            var strdd = (dd.getMonth() + 1) + '/' + dd.getDate() + '/' + dd.getFullYear();
+            $('*[id$="' + fieldId + '"]').val(strdd);
+          }
+      }
+     }
+  </script>
+  <apex:form >
+    <apex:inputText id="ipField" disabled="true" value="{!objContract.Test__c}"/> <br/>
+    <apex:commandButton action="{!dummyAction}" value="Submit"/>
+  </apex:form>
+</apex:page>

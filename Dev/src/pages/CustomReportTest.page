@@ -1,0 +1,5 @@
+<apex:page controller="CustomReportTestController" action="{!doAction}">
+  
+  {!debug}
+  
+</apex:page>

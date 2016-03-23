@@ -1,0 +1,22 @@
+<apex:page controller="SOSLSearchController">
+	<apex:form >
+		<apex:pageBlock title="SOSL Search Page" mode="maindetail">
+			<table>
+				<tr>
+					<td class="labelCol">Search: </td>
+					<td><apex:inputText value="{!searchString}" /></td>
+					<td><apex:commandButton action="{!searchWebsite}" value="Search" /></td>
+				</tr>
+			</table>
+			
+			<apex:pageBlockTable value="{!results}" var="result">
+				<apex:column headerValue="Title">
+					<apex:outputText escape="false" value="{!result.title}" />
+				</apex:column>
+				<apex:column headerValue="Preview" >
+					<apex:outputText escape="false" value="{!result.preview}" />
+				</apex:column>
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

@@ -1,0 +1,7 @@
+<apex:page controller="BasePDFGeneratorController" renderAs="pdf">
+  Content <br/><br/>
+  <apex:outputText escape="false" value="{!content}" />
+  
+  <br/><br/>
+  {!content}
+</apex:page>

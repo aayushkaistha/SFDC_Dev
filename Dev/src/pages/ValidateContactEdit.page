@@ -1,0 +1,3 @@
+<apex:page standardController="Contact" extensions="ValidateContactEdit" action="{!onPageLoad}">
+  Loading... Please wait.. {!redirectURL }
+</apex:page>

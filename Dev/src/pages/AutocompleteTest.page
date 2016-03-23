@@ -1,0 +1,64 @@
+<apex:page >
+  <head>
+    <link href="{!URLFOR($Resource.jQuery, 'css/overcast/jquery-ui-1.8.16.custom.css')}" rel="stylesheet" type="text/css"/> 
+    <script src="{!URLFOR($Resource.jQuery, 'js/jquery-1.4.4.min.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryUI, 'development-bundle/ui/jquery.ui.core.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryUI, 'development-bundle/ui/jquery.ui.widget.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryUI, 'development-bundle/ui/jquery.ui.position.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryUI, 'development-bundle/ui/jquery.ui.autocomplete.js')}"></script>
+    <script src="../../soap/ajax/21.0/connection.js" type="text/javascript"> </script>
+    <!-- <link rel="stylesheet" href="{!URLFOR($Resource.jQueryUI, 'development-bundle/demos/demos.css')}" /> -->
+    <script>
+    
+    var suggestions = [];
+    var searchString;
+    var $j = jQuery.noConflict();
+    
+    $j(function() {        
+        $j( "#tags" ).autocomplete({
+            source: suggestions,
+            minLength: 3
+        });
+    });
+    
+    function loadOpportunities(){
+      var enteredText = $j("#tags").val();
+      if(enteredText.length < 3){
+        return;
+      }else{
+        var temp = enteredText.substring(0, 3);
+        if(temp == searchString){
+          return;
+        }else{
+          searchString = temp;          
+        }
+      }
+      sforce.connection.sessionId = '{!$Api.Session_ID}';      
+      var result = sforce.connection.query("Select Name,Id from Opportunity where Name Like '" + searchString + "%' limit 10", {
+      onSuccess : success, onFailure : failure});
+ 
+      function success(result) {
+        //alert(result);
+        var it = new sforce.QueryResultIterator(result);
+        suggestions = new Array();
+        for(i=0; it.hasNext(); i++){
+          var record = it.next();    
+          suggestions[i] = record.Name;
+        }
+        $j( "#tags" ).autocomplete({
+            source: suggestions,
+            minLength: 3
+        });
+        $j( "#tags" ).autocomplete("search", $j( "#tags" ).val());
+      }
+ 
+      function failure(error) {       
+       alert(error);
+      }
+    }
+    </script>
+  </head>
+  
+  <label for="tags">Tags: </label>
+    <input id="tags" onblur="loadOpportunities()" onkeyup="loadOpportunities()" />
+</apex:page>

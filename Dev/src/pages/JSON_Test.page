@@ -1,0 +1,109 @@
+<apex:page id="mainPage" controller="JSON_Test">
+  <script type="text/javascript">
+    
+    window.onload = function(){
+        onAddNameComplete();
+    };
+    
+    function showCtrlJSON(){
+    	var addRes = document.getElementById("mainPage:mainForm:addResult").value;
+      	alert("Controller Result: \n" + addRes);
+    }
+    
+    function showDbJSON(){
+    	var saveRes = document.getElementById("mainPage:mainForm:saveResult").value;
+      	alert("Database Result: \n" + saveRes);
+    }
+    
+    function addName(){
+      var name = document.getElementById("inputName").value;
+      document.getElementById("localResults").innerHTML = document.getElementById("localResults").innerHTML + "<br\>" + name;
+      document.getElementById("inputName").value = "";
+      
+      addNameAjax(name);
+    }
+    
+    function onAddNameComplete(){
+      var addRes = document.getElementById("mainPage:mainForm:addResult").value;
+      //alert("Controller Result: \n" + addRes);
+      
+      var namesList = JSON.parse(addRes);
+      var finalHtml = "";
+      for(var i = 0; i<namesList.length; i++){
+          finalHtml = finalHtml + "<br\>" + namesList[i].Name;
+      }
+      document.getElementById("controllerResults").innerHTML = finalHtml;
+      
+      var saveRes = document.getElementById("mainPage:mainForm:saveResult").value;
+      //alert("Database Result: \n" + saveRes);
+      
+      namesList = JSON.parse(saveRes);
+      finalHtml = "";
+      for(var i = 0; i<namesList.length; i++){
+          finalHtml = finalHtml + "<br\>" + namesList[i].Name;
+      }
+      document.getElementById("dbResults").innerHTML = finalHtml;
+    }
+  </script>
+  
+  
+
+  <apex:form id="mainForm">
+      <apex:actionFunction name="addNameAjax" action="{!ctrlAddName}" reRender="controllerResultPanel" oncomplete="onAddNameComplete();" status="addStatus">
+          <apex:param name="name" value="" />
+      </apex:actionFunction>
+      
+      <apex:actionFunction name="saveAllAjax" action="{!saveAll}" reRender="controllerResultPanel" oncomplete="onAddNameComplete();" status="saveStatus">
+      </apex:actionFunction>
+      
+      <apex:outputPanel id="controllerResultPanel">
+        <apex:inputHidden id="addResult" value="{!ctrlResult}" />
+        <apex:inputHidden id="saveResult" value="{!dbResult}" />
+      </apex:outputPanel>
+      
+      <table width="600px">
+          <tr>
+              <td align="right" width="100px">
+                  Enter Name:
+              </td>
+              <td align="left" width="150px">
+                  <input type="text" id="inputName" value=""/>
+              </td>
+              <td align="left" width="150px">
+                  <input type="button" class="btn" value="Add" onclick="addName();" />
+                  <apex:actionStatus startText=" (Adding...)" stopText="" id="addStatus"/>
+              </td>
+              <td align="left">
+                  <input type="button" class="btn" value="Save All" onclick="saveAllAjax();" />
+                  <apex:actionStatus startText=" (Saving...)" stopText="" id="saveStatus"/>
+              </td>
+          </tr>
+      </table>
+  </apex:form>
+  
+  <br/><br/>
+  <apex:outputPanel id="ResultsPanel">
+      <table width="100%">
+          <tr>
+              <td width="33%">
+                  <b>Local Results</b>
+                  <div id="localResults">
+                  
+                  </div>
+              </td>
+              <td width="33%">
+                  <b>Controller Results</b> (<a href="#" onclick="showCtrlJSON(); return false;">Show JSON</a>)
+                  <div id="controllerResults">
+                  
+                  </div>
+              </td>
+              <td>
+                  <b>Database Results</b> (<a href="#" onclick="showDbJSON(); return false;">Show JSON</a>)
+                  <div id="dbResults">
+                  
+                  </div>
+              </td>
+           </tr>
+       </table>
+  </apex:outputPanel>
+</apex:page>

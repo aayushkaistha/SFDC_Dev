@@ -1,0 +1,13 @@
+<apex:page controller="CryptoTest">
+  <apex:form >
+      Enter the data to be encrypted: <apex:inputText value="{!inputData}" />
+      <br/>
+      <apex:commandButton action="{!encryptData}" value="Submit" />
+      
+      <br/><br/>
+      
+      Key: {!keyToUse} <br/>
+      Encrypted Data: {!encryptedData} <br/>
+      Decrypted Data: {!decryptedData}
+  </apex:form>
+</apex:page>

@@ -1,0 +1,105 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false">
+  
+      <apex:stylesheet value="https://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css"/>
+      
+      <apex:includeScript value="https://code.jquery.com/jquery-1.9.1.min.js"/>
+      <apex:includeScript value="https://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"/>
+  
+  <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  </head>
+  
+  <body>
+      <script>
+        $(document).on("click", ".show-page-loading-msg", function() {
+            var $this = $( this ),
+                theme = $this.jqmData("theme") || $.mobile.loader.prototype.options.theme,
+                msgText = $this.jqmData("msgtext") || $.mobile.loader.prototype.options.text,
+                textVisible = $this.jqmData("textvisible") || $.mobile.loader.prototype.options.textVisible,
+                textonly = !!$this.jqmData("textonly");
+                html = $this.jqmData("html") || "";
+            $.mobile.loading( 'show', {
+                    text: msgText,
+                    textVisible: textVisible,
+                    theme: theme,
+                    textonly: textonly,
+                    html: html
+            });
+        })
+        .on("click", ".hide-page-loading-msg", function() {
+            $.mobile.loading( 'hide' );
+        });
+    </script>
+  
+      <div data-role="page" data-theme="b" id="detailpage">
+          <div data-role="header" data-position="fixed">
+                <a href='#popupDialog' id="btnSettings" class='ui-btn-right' data-icon='gear' data-direction="reverse" data-rel="popup" data-position-to="window" data-transition="pop">Settings</a>
+                <h1>Main Page</h1>
+          </div>
+          <div data-role="content" id="contactList">
+              <br/>
+              <div data-theme="b">
+                  <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search Customers...">
+                        <li><a href="#customerdetailpage" data-transition="slide">Acura</a></li>
+                        <li><a href="#customerdetailpage" data-transition="slide">Audi</a></li>
+                        <li><a href="#customerdetailpage" data-transition="slide">BMW</a></li>
+                        <li><a href="#customerdetailpage" data-transition="slide">Cadillac</a></li>
+                        <li><a href="#customerdetailpage" data-transition="slide">Ferrari</a></li>
+                    </ul>
+                </div>
+            </div>
+          
+          <!-- Settings Popup -->
+          <div data-role="popup" id="popupDialog" data-overlay-theme="a" data-theme="c" style="max-width:400px;" class="ui-corner-all">
+                <div data-role="header" data-theme="a" class="ui-corner-top">
+                    <h1>Settings</h1>
+                </div>
+                <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
+                    <h3>Push Notifications Settings</h3>
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td>
+                                <label for="flip-1">When truck is late</label>
+                            </td>
+                            <td>
+                                <select name="flip-1" id="flip-1" data-role="slider">
+                                    <option value="off">Off</option>
+                                    <option value="on">On</option>
+                                </select> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="flip-2">Updates from Admin</label>
+                            </td>
+                            <td>
+                                <select name="flip-2" id="flip-2" data-role="slider">
+                                    <option value="off">Off</option>
+                                    <option value="on">On</option>
+                                </select> 
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    
+                    <a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Cancel</a>    
+                    <a href="#" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">Save</a>  
+                </div>
+            </div>
+      </div>
+      
+      <div data-role="page" data-theme="b" id="customerdetailpage">
+          <div data-role="header" data-position="fixed">
+                <a href='#detailpage' id="btnBack" class='ui-btn-right' data-icon='back' data-direction="reverse" data-transition="slide">Back</a>
+                <h1>Customer Detail Page</h1>
+          </div>
+          
+          <div data-role="content" id="contactList">
+              <button class="show-page-loading-msg" data-theme="a" data-textonly="false" data-textvisible="true" data-msgtext="Loading.. Please Wait." data-icon="arrow-r" data-iconpos="right">Show Loading Animation</button>
+              
+              <button class="hide-page-loading-msg" data-icon="delete" data-iconpos="right">Hide Loading Animation</button>
+          </div>
+      </div>
+  </body>
+  
+</apex:page>

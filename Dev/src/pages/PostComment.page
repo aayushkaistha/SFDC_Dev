@@ -1,0 +1,25 @@
+<apex:page controller="PostCommentController" action="{!doAction}" showHeader="false">
+     <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=168100298202";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+  <table cellpadding="20" width="100%">
+    <tr>
+      <td>
+        <!-- Begin Default Content REMOVE THIS -->
+  <h1>Hello</h1>
+  This is Page Number 1
+  <!-- End Default Content REMOVE THIS -->
+  
+  <br/><br/>
+  <div class="fb-comments" data-href="http://paras-developer-edition.ap1.force.com/PostComment" data-width="500" data-num-posts="10"></div>
+      </td>
+    </tr>
+  </table>
+ 
+</apex:page>

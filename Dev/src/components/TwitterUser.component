@@ -1,0 +1,36 @@
+<apex:component >
+
+	<apex:attribute name="user" type="TwitterUser" required="true" description="" />
+
+	<table width="100%">
+	    <tr>
+	        <td style="padding-top: 5px; color: #FFFFFF;">
+	            <img src="{!user.profile_image_url}" width="48px"/>
+	        </td>
+	        <td style=" color: #FFFFFF;" width="100%">
+	            {!user.status.text}
+	        </td>
+	        <td rowspan="2" width="20px" style="font-size: 9px;">
+	            <a href="" title="Reply to {!user.screen_name}" style="padding-bottom: 1px;" onclick="YAHOO.force.com.showMe('reply', '{!user.screen_name}'); return false;" >
+	                <img src="{!URLFOR($Resource.twitternav, 'reply.jpg')}" style="cursor: pointer;"/>
+	            </a>
+	            <a href="" title="Retweet {!user.screen_name}'s tweet" style="padding-bottom: 1px" onclick='YAHOO.force.com.showMe("retweet", "{!user.screen_name}", "{!user.status.text}", "{!user.id}"); return false;' >
+	                <img src="{!URLFOR($Resource.twitternav, 'retweet.jpg')}" style="cursor: pointer;"/>
+	            </a>
+	            <a href="" title="Direct message {!user.screen_name}" onclick="YAHOO.force.com.showMe('msg', '{!user.screen_name}', '', '{!user.id}' ); return false;">
+	                <img src="{!URLFOR($Resource.twitternav, 'directmessage.jpg')}" style="cursor: pointer;"/>
+	            </a><br/>
+	        </td>
+	    </tr>
+	    <tr > 
+	        <td colspan="3" style="padding-bottom: 10px; color: #FFFFFF;">
+	            {!user.name} - {!user.status.created_at}
+	        </td>
+	    </tr>
+	    <tr>
+	        <td colspan="3">
+	            <hr/>
+	        </td>
+	    </tr>
+	</table>
+</apex:component>

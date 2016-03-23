@@ -1,0 +1,321 @@
+<apex:page controller="TwitterTestController">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/skin.css" />
+ 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/container/container-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/animation/animation-min.js"></script>
+<style>
+.twit td, .twit table {
+    background-color: #000000;
+    color: #FFFFFF;
+}
+</style>
+
+<script>
+    
+    YAHOO.namespace("force.com");
+    var tweetBtn, retweetBtn, replyBtn, directMsgBtn, tweetInput, inReplyToField;
+    
+    YAHOO.force.com.showMe = function(action, screen_name, origTweet, Id) {
+        document.getElementById("myPanel").style.display = "block";
+        tweetBtn.style.display = "none";
+        retweetBtn.style.display = "none";
+        replyBtn.style.display = "none";
+        directMsgBtn.style.display = "none";
+        
+        switch (action) {
+            case "tweet":
+                tweetBtn.style.display = "block";
+                tweetInput.value = '';
+                break;
+            case "retweet":
+                tweetInput.value = 'RT @' + screen_name + ': ' + origTweet;
+                inReplyToField.value = Id;
+                retweetBtn.style.display = "block";
+                break;
+            case "reply":
+                tweetInput.value = '@' + screen_name + ' ';
+                replyBtn.style.display = "block";
+                break;
+            case "msg":
+                tweetInput.value = 'D ' + screen_name + ' ';
+                inReplyToField.value = Id;
+                directMsgBtn.style.display = "block";
+                break;
+        }
+        YAHOO.force.com.myDialog.show();
+    }
+    
+    YAHOO.force.com.showLoading = function() {
+        YAHOO.force.com.wait.show();
+    }
+    
+    YAHOO.force.com.hideMe = function() {
+        YAHOO.force.com.myDialog.hide();
+    }
+    
+    YAHOO.force.com.hideLoading = function() {
+        YAHOO.force.com.wait.hide();
+    }
+    
+    function init() {
+        document.body.className = document.body.className + " yui-skin-sam";
+        YAHOO.force.com.myDialog = new YAHOO.widget.Panel(
+            "myPanel", 
+            { 
+                    width           :   600,
+                    visible         :   false, 
+                    draggable       :   true, 
+                    close           :   true, 
+                    modal           :   false, 
+                    fixedCenter     :   true, 
+                    zindex          :   40,
+                    modal           :   true,
+                    effect          :   {effect:YAHOO.widget.ContainerEffect.FADE,duration:0.35} 
+            }
+         );
+        YAHOO.force.com.wait = new YAHOO.widget.Panel(
+            "wait",   
+            { 
+                    width:"240px",  
+                    fixedcenter:true,  
+                    close:false,  
+                    draggable:false,  
+                    zindex:4, 
+                    modal:true, 
+                    visible:false 
+            }  
+        ); 
+     
+        YAHOO.force.com.wait.setHeader("Loading, please wait..."); 
+        YAHOO.force.com.wait.setBody('<img src="http://l.yimg.com/a/i/us/per/gr/gp/rel_interstitial_loading.gif" />'); 
+        YAHOO.force.com.wait.render(document.body);             
+        
+        YAHOO.force.com.myDialog.render(document.getElementById("myForm"));
+    }
+    YAHOO.util.Event.addListener(window, "load", init);
+    
+</script>
+   <apex:form id="myForm">
+    	<apex:outputPanel layout="block" style="width: 700px" >
+            <apex:sectionHeader subtitle="Twit me this, Twit me that" />
+            
+            <apex:outputPanel layout="block" id="login" style="width: 350px;">
+                <apex:outputPanel layout="block" rendered="{!ISNULL(thisUser)}">
+                    <apex:pageBlock title="Twitter Login">
+                        <apex:pageBlockSection columns="1">
+                        	<apex:actionRegion >
+                            <apex:outputPanel >
+                                <apex:outputLabel value="Twitter username"  />
+                                <apex:inputText id="unm" value="{!un}" />
+                            </apex:outputPanel>
+                            <br/>
+                            <apex:outputPanel >
+                                <apex:outputLabel value="Twitter password"  />
+                                <apex:inputSecret id="pwd" value="{!pw}" />
+                            </apex:outputPanel>
+                            <apex:outputPanel layout="block" style="text-align: right;">
+                                <apex:commandButton value="Continue" action="{!authCheck}" oncomplete="YAHOO.force.com.hideLoading()" rerender="tweetarea, login, msgarea" status="loginStatus"/>
+                                <apex:actionStatus id="loginStatus" onstart="YAHOO.force.com.showLoading()"  />
+                            </apex:outputPanel>
+	                        </apex:actionRegion>
+                        </apex:pageBlockSection>
+                    </apex:pageBlock>
+                </apex:outputPanel>
+            </apex:outputPanel>
+         
+            <div id="myPanel" style="display: none">
+               	<apex:actionRegion >
+                <div class="hd" >
+                    What are you doing?
+                </div>
+                <div class="bd">
+                    <apex:inputTextArea id="tweetInput" value="{!newTweet}" style="width: 500px;"/>
+                    <apex:inputHidden id="inReplyTo" value="{!inReplyTo}" />
+                    <div style="text-align: right;" >
+                        <apex:commandButton id="tweetBtn" value="Tweet" action="{!doTweet}" oncomplete="YAHOO.force.com.hideMe();refresh();" rerender="tweetarea"/>
+                        <apex:commandButton id="tweetReplyBtn" value="Reply" action="{!doTweet}" oncomplete="YAHOO.force.com.hideMe();refresh();" rerender="tweetarea"/>
+                        <apex:commandButton id="directMsgBtn" value="Send Message" action="{!doMessage}" oncomplete="YAHOO.force.com.hideMe();refresh();" rerender="tweetarea, msgarea, msgarea2"/>
+                        <apex:commandButton id="retweetBtn" value="Re-Tweet" action="{!doTweet}" oncomplete="YAHOO.force.com.hideMe();refresh()" rerender="tweetarea"/>
+                        <script>
+                            tweetBtn = document.getElementById("{!$Component.tweetBtn}");
+                            retweetBtn = document.getElementById("{!$Component.retweetBtn}");
+                            replyBtn = document.getElementById("{!$Component.tweetReplyBtn}");
+                            directMsgBtn = document.getElementById("{!$Component.directMsgBtn}");
+                            tweetInput = document.getElementById("{!$Component.tweetInput}");
+                            inReplyToField = document.getElementById("{!$Component.inReplyTo}");
+                        </script>
+                    </div>
+                </div>
+                <div class="ft" >
+                    Powered by Apex
+                </div>
+                </apex:actionRegion>
+            </div>
+            <apex:actionFunction action="{!loadFriendsTimeline}" name="refresh" rerender="tweetarea" />
+            <apex:outputPanel id="nullrender" />
+        
+        
+            <apex:outputPanel layout="block" id="tweetarea">
+                <apex:outputPanel layout="block" rendered="{!NOT(ISNULL(thisUser))}">
+                <table>
+                    <tr>
+                        <td width="350px">  
+                            <apex:outputPanel layout="block" styleclass="twit" style="width: 100%; overflow: scroll;" >
+                                <apex:outputPanel layout="block"  style="width: 100%; border-bottom: solid 1pt white; ">
+                                    <table width="100%">
+                                        <tr>
+                                            <td >
+                                                <div style="color: #FFFFFF; font-size: 18px">
+                                                    All Friends
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="text-align: right;">
+                                                	<apex:actionRegion >
+                                                    <apex:commandButton value="Refresh" action="{!loadFriendsTimeline}" rerender="tweetarea" />
+                                                    <apex:commandButton value="Tweet" immediate="true" rerender="nullrender" onclick="YAHOO.force.com.showMe('tweet');" />
+                                                    </apex:actionRegion>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel layout="block" style="height: 250px; position: relative; overflow: scroll; width: 100%; background-color: #000000; color: #FFFFFF;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <table>
+                                            <apex:repeat value="{!friendStatuses}" var="fs" >
+                                            	<tr><td>
+                                                    <c:TwitterTweet status="{!fs}" />
+                                            	</td></tr>
+                                            </apex:repeat>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                        </td>
+                        
+                        
+                        
+                        <td width="350px">
+                            <apex:outputPanel layout="block" styleClass="twit" id="msgarea" style="width: 100%;">
+                                <apex:outputPanel layout="block" style="width: 100%; border-bottom: solid 1pt white; ">
+                                    <table width="100%">
+                                        <tr>
+                                            <td >
+                                                <div style="color: #FFFFFF; font-size: 18px">
+                                                    Received Messages
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="text-align: right;">
+                                                	<apex:actionRegion >
+                                                    <apex:commandButton value="Refresh" action="{!loadMessages}" rerender="msgarea" />
+                                                    </apex:actionRegion>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </apex:outputPanel>
+                                <apex:outputPanel layout="block" style="overflow: scroll; width: 100%; height: 250px; background-color: #000000; color: #FFFFFF;" >
+                                    <table>
+                                        <apex:repeat value="{!messages}" var="m">
+                                        	<tr><td>
+                                        	<c:TwitterMessage message="{!m}" />
+											</td></tr>
+                                        </apex:repeat>
+                                    </table>
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                        </td>
+                    </tr>
+                
+                
+                
+                    <tr>
+                        <td>
+                            <apex:outputPanel layout="block" styleclass="twit" id="followers" style="width: 100%; overflow: scroll;" >
+                                <apex:outputPanel layout="block" style="width: 100%; border-bottom: solid 1pt white; ">
+                                    <table width="100%">
+                                        <tr>
+                                            <td >
+                                                <div style="color: #FFFFFF; font-size: 18px">
+                                                    Followers
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="text-align: right;">
+                                                	<apex:actionRegion >
+                                                    <apex:commandButton value="Refresh" action="{!loadFollowers}" rerender="tweetarea" />
+                                                   	</apex:actionRegion>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel layout="block" style="height: 250px; position: relative; overflow: scroll; width: 100%; background-color: #000000; color: #FFFFFF;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <table>
+                                            <apex:repeat value="{!followers}" var="fl" >
+                                                <tr><td>
+                                                	<c:TwitterUser user="{!fl}" />
+												</td></tr>                                             
+                                            </apex:repeat>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                        </td>
+                
+                
+                        <td>
+                            <apex:outputPanel layout="block" styleClass="twit" id="msgarea2" style="width: 100%; height: 100%">
+                                <apex:outputPanel layout="block" style="width: 100%; border-bottom: solid 1pt white; ">
+                                    <table width="100%">
+                                        <tr>
+                                            <td > 
+                                                <div style="color: #FFFFFF; font-size: 18px">
+                                                    Sent Messages
+                                                </div>
+                                            </td> 
+                                            <td>
+                                                <div style="text-align: right;">
+                                                	<apex:actionRegion >
+                                                    <apex:commandButton value="Refresh" action="{!loadMessagesSent}" rerender="msgarea2" />
+                                                    </apex:actionRegion>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </apex:outputPanel>
+                                <apex:outputPanel layout="block" style="overflow: scroll; width: 100%; height: 250px; background-color: #000000; color: #FFFFFF;" >
+                                    <table>
+                                        <apex:repeat value="{!messagesSent}" var="m">
+                                        	<tr>
+                                        		<td>
+                                        			<c:TwitterMessage message="{!m}" />
+												</td>
+											</tr>
+                                        </apex:repeat>
+                                    </table>
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                        </td>
+                    </tr>
+                </table>
+                </apex:outputPanel>
+            </apex:outputPanel>
+	    </apex:outputPanel>
+    </apex:form>
+</apex:page>
